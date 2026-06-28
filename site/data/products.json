@@ -1,5 +1,5 @@
 {
-  "last_updated": "2026-06-28T19:33:49.640483Z",
+  "last_updated": "2026-06-28T19:39:19.488996Z",
   "categories": [
     "دیجیتال",
     "فیزیکی",
@@ -17,6 +17,19 @@
       "in_stock": true,
       "stock_count": 123,
       "created_at": "2026-06-28T19:33:49.640458Z",
+      "is_active": true
+    },
+    {
+      "id": "p_0002",
+      "title": "خوافر",
+      "description": "نافر",
+      "price": 13123,
+      "currency": "IRT",
+      "category": "اشتراک",
+      "image_url": "./assets/p_0002.jpg",
+      "in_stock": true,
+      "stock_count": 123123123,
+      "created_at": "2026-06-28T19:39:19.488969Z",
       "is_active": true
     }
   ]
