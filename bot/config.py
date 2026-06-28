@@ -25,6 +25,9 @@ ASSETS_PATH = os.getenv("ASSETS_PATH", "site/assets")
 # یوزرنیم بات بدون @ - برای ساخت دیپ‌لینک سفارش در سایت
 BOT_USERNAME = os.getenv("BOT_USERNAME", "")
 
+# آدرس کامل سایت روی GitHub Pages (با https://) - برای دکمه Mini App داخل بات
+SITE_URL = os.getenv("SITE_URL", "")
+
 # آیدی عددی (یا یوزرنیم) کانال/چت لاگ تغییرات (اختیاری)
 LOG_CHAT_ID = os.getenv("LOG_CHAT_ID", "")
 

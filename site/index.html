@@ -2,53 +2,64 @@
 <html lang="fa" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>perShop</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800&family=Lalezar&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
 </head>
 <body>
 
   <header class="site-header">
     <div class="header-inner">
       <h1 class="brand">per<span>Shop</span></h1>
-      <p class="tagline">فروشگاهی که هر روز تازه‌تره</p>
+      <p class="tagline">دفترچه‌ی فروش، همیشه به‌روز</p>
     </div>
+    <div class="header-stitch" aria-hidden="true"></div>
   </header>
 
   <main>
     <nav class="category-tabs" id="categoryTabs" aria-label="دسته‌بندی محصولات">
       <button class="tab active" data-category="all">همه</button>
     </nav>
+    <div class="perforation" aria-hidden="true"></div>
 
     <section id="productGrid" class="product-grid" aria-live="polite">
       <!-- کارت‌های محصول اینجا با JS رندر می‌شن -->
     </section>
+
+    <div id="skeletonGrid" class="product-grid skeleton-grid" aria-hidden="true">
+      <div class="skeleton-card"></div>
+      <div class="skeleton-card"></div>
+      <div class="skeleton-card"></div>
+    </div>
 
     <p id="emptyState" class="empty-state" hidden>
       فعلاً محصولی برای نمایش نیست. به‌زودی برمی‌گردیم 🌱
     </p>
   </main>
 
-  <div id="productModal" class="modal" hidden>
-    <div class="modal-backdrop" data-close></div>
-    <div class="modal-card" role="dialog" aria-modal="true">
-      <button class="modal-close" data-close aria-label="بستن">✕</button>
-      <div class="modal-image-wrap">
-        <img id="modalImage" src="" alt="">
-        <span id="modalStamp" class="stamp" hidden>تازه</span>
-      </div>
-      <div class="modal-body">
-        <span id="modalCategory" class="modal-category"></span>
-        <h2 id="modalTitle"></h2>
-        <p id="modalDescription"></p>
-        <div class="modal-footer">
-          <span id="modalPrice" class="price"></span>
-          <a id="modalBuyBtn" class="buy-btn" target="_blank" rel="noopener">سفارش از طریق تلگرام</a>
+  <div id="sheetOverlay" class="sheet-overlay" hidden data-close></div>
+  <div id="productSheet" class="product-sheet" hidden role="dialog" aria-modal="true">
+    <div class="sheet-handle" data-close aria-hidden="true"></div>
+    <div class="sheet-image-wrap">
+      <img id="sheetImage" src="" alt="">
+      <span id="sheetStamp" class="stamp" hidden>تازه</span>
+    </div>
+    <div class="sheet-body">
+      <span id="sheetCategory" class="sheet-category"></span>
+      <h2 id="sheetTitle"></h2>
+      <p id="sheetDescription"></p>
+
+      <div class="price-tag-row">
+        <div class="price-tag">
+          <span class="price-tag-hole"></span>
+          <span id="sheetPrice" class="price-tag-amount"></span>
         </div>
-        <p id="modalOutOfStock" class="out-of-stock-note" hidden>این محصول فعلاً ناموجود است</p>
+        <button id="sheetBuyBtn" class="buy-btn">سفارش از طریق تلگرام</button>
       </div>
+      <p id="sheetOutOfStock" class="out-of-stock-note" hidden>این محصول فعلاً ناموجود است</p>
     </div>
   </div>
 

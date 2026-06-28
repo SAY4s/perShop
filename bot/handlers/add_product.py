@@ -22,7 +22,7 @@ STEP_IMAGE = "image"
 
 def register_add_product_handlers(bot: TeleBot):
 
-    @bot.message_handler(commands=["addproduct"])
+    @bot.message_handler(commands=["add"])
     def start_add_product(message: Message):
         if not is_admin(message.from_user.id):
             bot.reply_to(message, "⛔️ این دستور فقط برای ادمین‌هاست.")
@@ -108,36 +108,49 @@ def register_add_product_handlers(bot: TeleBot):
 
         bot.reply_to(message, "⏳ در حال آپلود عکس و ثبت محصول روی گیت‌هاب...")
 
-        file_id = message.photo[-1].file_id
-        file_info = bot.get_file(file_id)
-        downloaded = bot.download_file(file_info.file_path)
+        try:
+            file_id = message.photo[-1].file_id
+            file_info = bot.get_file(file_id)
+            downloaded = bot.download_file(file_info.file_path)
 
-        from product_store import generate_id
-        from github_client import load_products as _lp
-        data_now, _ = _lp()
-        next_id = generate_id(data_now["products"])
-        filename = f"{next_id}.jpg"
+            from product_store import generate_id
+            from github_client import load_products as _lp
+            data_now, _ = _lp()
+            next_id = generate_id(data_now["products"])
+            filename = f"{next_id}.jpg"
 
-        rel_path = upload_image(filename, downloaded, f"chore: upload image for {next_id}")
-        image_url_relative = f"./{rel_path.split('site/', 1)[-1]}" if "site/" in rel_path else f"./{rel_path}"
+            rel_path = upload_image(filename, downloaded, f"chore: upload image for {next_id}")
+            image_url_relative = f"./{rel_path.split('site/', 1)[-1]}" if "site/" in rel_path else f"./{rel_path}"
 
-        product = add_product(
-            title=d["title"],
-            description=d["description"],
-            price=d["price"],
-            category=d["category"],
-            image_url=image_url_relative,
-            stock_count=d["stock_count"],
-            commit_actor=message.from_user.username or str(message.from_user.id),
-        )
+            product = add_product(
+                title=d["title"],
+                description=d["description"],
+                price=d["price"],
+                category=d["category"],
+                image_url=image_url_relative,
+                stock_count=d["stock_count"],
+                commit_actor=message.from_user.username or str(message.from_user.id),
+            )
 
-        bot.send_message(
-            message.chat.id,
-            f"✅ محصول با موفقیت ثبت شد!\n\n"
-            f"🆔 {product['id']}\n"
-            f"📌 {product['title']}\n"
-            f"💰 {product['price']:,} تومان\n"
-            f"🏷 {product['category']}\n"
-            f"📦 موجودی: {product['stock_count']}\n\n"
-            f"سایت تا چند دقیقه دیگه آپدیت می‌شه."
-        )
+            bot.send_message(
+                message.chat.id,
+                f"✅ محصول با موفقیت ثبت شد!\n\n"
+                f"🆔 {product['id']}\n"
+                f"📌 {product['title']}\n"
+                f"💰 {product['price']:,} تومان\n"
+                f"🏷 {product['category']}\n"
+                f"📦 موجودی: {product['stock_count']}\n\n"
+                f"سایت تا چند دقیقه دیگه آپدیت می‌شه."
+            )
+        except Exception as e:
+            import traceback
+            traceback.print_exc()  # متن کامل خطا در کنسول بات چاپ می‌شه
+            bot.send_message(
+                message.chat.id,
+                f"❌ ثبت محصول با خطا مواجه شد:\n`{type(e).__name__}: {e}`\n\n"
+                f"این معمولاً به یکی از این دلایله:\n"
+                f"• GITHUB_TOKEN غلط یا بدون اسکوپ repo\n"
+                f"• GITHUB_OWNER یا GITHUB_REPO در .env اشتباهه\n"
+                f"• فایل site/data/products.json هنوز روی ریپو پوش نشده\n\n"
+                f"کنسول بات رو چک کن، متن کامل خطا اونجاست."
+            )

@@ -11,7 +11,7 @@ from product_store import list_products
 
 def register_list_handlers(bot: TeleBot):
 
-    @bot.message_handler(commands=["listproducts"])
+    @bot.message_handler(commands=["list"])
     def cmd_list(message: Message):
         if not is_admin(message.from_user.id):
             bot.reply_to(message, "⛔️ این دستور فقط برای ادمین‌هاست.")
@@ -19,7 +19,7 @@ def register_list_handlers(bot: TeleBot):
 
         products = list_products()
         if not products:
-            bot.reply_to(message, "هنوز هیچ محصولی ثبت نشده. با /addproduct شروع کن.")
+            bot.reply_to(message, "هنوز هیچ محصولی ثبت نشده. با /add شروع کن.")
             return
 
         for p in products:

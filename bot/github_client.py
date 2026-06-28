@@ -26,8 +26,9 @@ def _contents_url(path: str) -> str:
 
 def get_file(path: str):
     """
-    یک فایل رو از ریپو می‌خونه.
+    یک فایل متنی (مثل JSON) رو از ریپو می‌خونه و decode می‌کنه.
     خروجی: (content_str, sha) یا (None, None) اگه فایل وجود نداشت.
+    فقط برای فایل‌های متنی استفاده شه؛ برای عکس/فایل باینری از get_file_sha استفاده کن.
     """
     resp = requests.get(_contents_url(path), headers=_headers(), params={"ref": GITHUB_BRANCH})
     if resp.status_code == 404:
@@ -36,6 +37,19 @@ def get_file(path: str):
     data = resp.json()
     content = base64.b64decode(data["content"]).decode("utf-8")
     return content, data["sha"]
+
+
+def get_file_sha(path: str):
+    """
+    فقط sha فایل رو برمی‌گردونه، بدون اینکه محتوا رو decode کنه.
+    برای فایل‌های باینری (عکس و...) باید این تابع استفاده شه، نه get_file.
+    خروجی: sha (str) یا None اگه فایل وجود نداشت.
+    """
+    resp = requests.get(_contents_url(path), headers=_headers(), params={"ref": GITHUB_BRANCH})
+    if resp.status_code == 404:
+        return None
+    resp.raise_for_status()
+    return resp.json()["sha"]
 
 
 def put_file(path: str, content_bytes: bytes, message: str, sha: str = None):
@@ -88,7 +102,8 @@ def upload_image(filename: str, image_bytes: bytes, commit_message: str) -> str:
     خروجی: مسیر نسبی فایل (برای استفاده در image_url)
     """
     path = f"{ASSETS_PATH}/{filename}"
-    # برای عکس جدید معمولاً sha نداریم؛ اگه از قبل بود، می‌گیریم تا overwrite امن باشه
-    _, sha = get_file(path)
+    # برای عکس جدید معمولاً sha نداریم؛ اگه از قبل بود، فقط sha رو می‌گیریم
+    # (نه محتوا - چون عکس باینریه و نمی‌شه با utf-8 decode بشه)
+    sha = get_file_sha(path)
     put_file(path, image_bytes, commit_message, sha=sha)
     return path
