@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>perShop</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800&family=Lalezar&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="header-inner">
+      <h1 class="brand">per<span>Shop</span></h1>
+      <p class="tagline">فروشگاهی که هر روز تازه‌تره</p>
+    </div>
+  </header>
+
+  <main>
+    <nav class="category-tabs" id="categoryTabs" aria-label="دسته‌بندی محصولات">
+      <button class="tab active" data-category="all">همه</button>
+    </nav>
+
+    <section id="productGrid" class="product-grid" aria-live="polite">
+      <!-- کارت‌های محصول اینجا با JS رندر می‌شن -->
+    </section>
+
+    <p id="emptyState" class="empty-state" hidden>
+      فعلاً محصولی برای نمایش نیست. به‌زودی برمی‌گردیم 🌱
+    </p>
+  </main>
+
+  <div id="productModal" class="modal" hidden>
+    <div class="modal-backdrop" data-close></div>
+    <div class="modal-card" role="dialog" aria-modal="true">
+      <button class="modal-close" data-close aria-label="بستن">✕</button>
+      <div class="modal-image-wrap">
+        <img id="modalImage" src="" alt="">
+        <span id="modalStamp" class="stamp" hidden>تازه</span>
+      </div>
+      <div class="modal-body">
+        <span id="modalCategory" class="modal-category"></span>
+        <h2 id="modalTitle"></h2>
+        <p id="modalDescription"></p>
+        <div class="modal-footer">
+          <span id="modalPrice" class="price"></span>
+          <a id="modalBuyBtn" class="buy-btn" target="_blank" rel="noopener">سفارش از طریق تلگرام</a>
+        </div>
+        <p id="modalOutOfStock" class="out-of-stock-note" hidden>این محصول فعلاً ناموجود است</p>
+      </div>
+    </div>
+  </div>
+
+  <footer class="site-footer">
+    <p>perShop — مدیریت محصولات از طریق ربات تلگرام</p>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
