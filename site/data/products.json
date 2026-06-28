@@ -1,5 +1,23 @@
 {
-  "last_updated": "2026-06-28T00:00:00Z",
-  "categories": ["دیجیتال", "فیزیکی", "اشتراک"],
-  "products": []
+  "last_updated": "2026-06-28T19:17:59.992836Z",
+  "categories": [
+    "دیجیتال",
+    "فیزیکی",
+    "اشتراک"
+  ],
+  "products": [
+    {
+      "id": "p_0001",
+      "title": "تیلین",
+      "description": "اکس خوبم",
+      "price": 9999999,
+      "currency": "IRT",
+      "category": "اشتراک",
+      "image_url": "./assets/p_0001.jpg",
+      "in_stock": true,
+      "stock_count": 1,
+      "created_at": "2026-06-28T19:17:59.992803Z",
+      "is_active": true
+    }
+  ]
 }
