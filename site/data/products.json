@@ -1,5 +1,23 @@
 {
-  "last_updated": "2026-06-28T00:00:00Z",
-  "categories": ["دیجیتال", "فیزیکی", "اشتراک"],
-  "products": []
+  "last_updated": "2026-06-29T18:37:52.135087Z",
+  "categories": [
+    "دیجیتال",
+    "فیزیکی",
+    "اشتراک"
+  ],
+  "products": [
+    {
+      "id": "p_0001",
+      "title": "مهدیس",
+      "description": "چشاش رنگی چیزش بنگیه",
+      "price": 698500000,
+      "currency": "IRT",
+      "category": "فیزیکی",
+      "image_url": "./assets/p_0001.jpg",
+      "in_stock": true,
+      "stock_count": 2,
+      "created_at": "2026-06-29T18:37:52.135076Z",
+      "is_active": true
+    }
+  ]
 }
