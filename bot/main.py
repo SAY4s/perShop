@@ -6,11 +6,13 @@ main.py
 from telebot import TeleBot
 from telebot.types import WebAppInfo, MenuButtonWebApp, InlineKeyboardMarkup, InlineKeyboardButton
 
-from config import BOT_TOKEN, SITE_URL
+from config import BOT_TOKEN, SITE_URL, is_admin
 from handlers.add_product import register_add_product_handlers
 from handlers.list_products import register_list_handlers
 from handlers.edit_delete_product import register_edit_delete_handlers
 from handlers.order import register_order_handlers
+from product_store import get_stats
+from order_log import count_orders_today, count_orders_total
 
 if not BOT_TOKEN:
     raise SystemExit("❌ BOT_TOKEN در فایل .env تنظیم نشده. اول config رو کامل کن.")
@@ -48,6 +50,29 @@ def cmd_shop(message):
     bot.send_message(message.chat.id, "فروشگاه رو از همینجا باز کن:", reply_markup=kb)
 
 
+@bot.message_handler(commands=["stats"])
+def cmd_stats(message):
+    if not is_admin(message.from_user.id):
+        bot.reply_to(message, "⛔️ این دستور فقط برای ادمین‌هاست.")
+        return
+
+    s = get_stats()
+    cat_lines = "\n".join(f"   • {cat}: {count}" for cat, count in s["per_category"].items()) or "   —"
+
+    text = (
+        "📊 آمار فروشگاه perShop\n\n"
+        f"📦 کل محصولات: {s['total']}\n"
+        f"✅ فعال: {s['active']}  |  🚫 غیرفعال: {s['inactive']}\n"
+        f"⚠️ ناموجود (از فعال‌ها): {s['out_of_stock']}\n"
+        f"🏷 تعداد دسته‌بندی: {s['categories_count']}\n"
+        f"💰 ارزش کل موجودی: {s['total_stock_value']:,} تومان\n\n"
+        f"📁 محصولات فعال به تفکیک دسته:\n{cat_lines}\n\n"
+        f"🛎 سفارش‌های امروز: {count_orders_today()}\n"
+        f"🛎 کل سفارش‌های ثبت‌شده: {count_orders_total()}"
+    )
+    bot.reply_to(message, text)
+
+
 @bot.message_handler(commands=["help"])
 def cmd_help(message):
     bot.reply_to(
@@ -55,6 +80,7 @@ def cmd_help(message):
         "📋 دستورات ادمین:\n"
         "/add - افزودن محصول جدید\n"
         "/list - مشاهده و مدیریت محصولات\n"
+        "/stats - آمار فروشگاه و سفارش‌ها\n"
         "/shop - باز کردن فروشگاه به‌صورت Mini App\n\n"
         "مشتری‌ها از دکمه 🛍 کنار باکس پیام یا دستور /shop وارد فروشگاه می‌شن."
     )

@@ -87,3 +87,34 @@ def delete_product(product_id: str, commit_actor="admin"):
         return False
     save_products(data, f"chore: delete product {product_id} by {commit_actor}")
     return True
+
+
+def get_stats():
+    """
+    آمار کلی فروشگاه رو برمی‌گردونه: تعداد کل، فعال/غیرفعال، ناموجود، و تعداد هر دسته.
+    """
+    data, _ = load_products()
+    products = data["products"]
+
+    active = [p for p in products if p.get("is_active", True)]
+    inactive = [p for p in products if not p.get("is_active", True)]
+    out_of_stock = [p for p in active if not p.get("in_stock", True) or p.get("stock_count", 0) <= 0]
+
+    per_category = {}
+    for p in active:
+        cat = p.get("category") or "بدون‌دسته"
+        per_category[cat] = per_category.get(cat, 0) + 1
+
+    total_stock_value = sum(
+        (p.get("price", 0) * p.get("stock_count", 0)) for p in active if p.get("stock_count", 0) > 0
+    )
+
+    return {
+        "total": len(products),
+        "active": len(active),
+        "inactive": len(inactive),
+        "out_of_stock": len(out_of_stock),
+        "per_category": per_category,
+        "total_stock_value": total_stock_value,
+        "categories_count": len(data.get("categories", [])),
+    }

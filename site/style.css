@@ -13,6 +13,27 @@
   --shadow-md: 0 10px 28px rgba(43, 36, 32, 0.12);
   --shadow-lg: 0 -8px 40px rgba(43, 36, 32, 0.22);
   --radius-card: 16px;
+  --dot-opacity: 0.035;
+  color-scheme: light;
+  transition: background-color 0.25s ease;
+}
+
+[data-theme="dark"] {
+  --paper: #211C18;
+  --paper-raised: #2B2420;
+  --ink: #F1E9DC;
+  --ink-soft: #B0A496;
+  --clay: #E07A52;
+  --clay-dark: #F2916B;
+  --teal: #5FA294;
+  --teal-soft: #2A3D38;
+  --gold: #D8AC5C;
+  --line: #3C342C;
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.25);
+  --shadow-md: 0 10px 28px rgba(0, 0, 0, 0.35);
+  --shadow-lg: 0 -8px 40px rgba(0, 0, 0, 0.5);
+  --dot-opacity: 0.06;
+  color-scheme: dark;
 }
 
 * { box-sizing: border-box; }
@@ -23,12 +44,13 @@ body {
   margin: 0;
   background: var(--paper);
   background-image:
-    radial-gradient(circle at 1px 1px, rgba(43,36,32,0.035) 1px, transparent 0);
+    radial-gradient(circle at 1px 1px, rgba(120,108,92,var(--dot-opacity)) 1px, transparent 0);
   background-size: 14px 14px;
   color: var(--ink);
   font-family: 'Vazirmatn', sans-serif;
   line-height: 1.7;
   -webkit-tap-highlight-color: transparent;
+  transition: background-color 0.25s ease, color 0.25s ease;
 }
 
 /* ===== Header ===== */
@@ -37,6 +59,29 @@ body {
   text-align: center;
   position: relative;
 }
+
+.theme-toggle {
+  position: absolute;
+  top: 18px;
+  left: 18px;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  border: 1.5px solid var(--line);
+  background: var(--paper-raised);
+  color: var(--ink);
+  font-size: 1rem;
+  cursor: pointer;
+  box-shadow: var(--shadow-sm);
+  transition: transform 0.2s ease, background 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 5;
+}
+
+.theme-toggle:hover { transform: scale(1.08); }
+.theme-toggle:active { transform: scale(0.94); }
 
 .header-inner {
   animation: dropIn 0.6s cubic-bezier(.2,.8,.2,1) both;
@@ -71,6 +116,64 @@ body {
   background-position: center;
   border-top: 1.5px dashed var(--line);
   opacity: 0.9;
+}
+
+/* ===== Toolbar (جستجو + مرتب‌سازی) ===== */
+.toolbar {
+  max-width: 720px;
+  margin: 20px auto 0;
+  padding: 0 18px;
+  display: flex;
+  gap: 10px;
+}
+
+.search-wrap {
+  position: relative;
+  flex: 1;
+}
+
+.search-icon {
+  position: absolute;
+  top: 50%;
+  right: 14px;
+  transform: translateY(-50%);
+  color: var(--ink-soft);
+  pointer-events: none;
+}
+
+#searchInput {
+  width: 100%;
+  height: 42px;
+  border: 1.5px solid var(--line);
+  background: var(--paper-raised);
+  border-radius: 12px;
+  padding: 0 40px 0 14px;
+  font-family: inherit;
+  font-size: 0.9rem;
+  color: var(--ink);
+  outline: none;
+  transition: border-color 0.18s ease, box-shadow 0.18s ease;
+}
+
+#searchInput:focus {
+  border-color: var(--teal);
+  box-shadow: 0 0 0 3px var(--teal-soft);
+}
+
+#searchInput::placeholder { color: var(--ink-soft); }
+
+.sort-select {
+  height: 42px;
+  border: 1.5px solid var(--line);
+  background: var(--paper-raised);
+  border-radius: 12px;
+  padding: 0 12px;
+  font-family: inherit;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--ink);
+  cursor: pointer;
+  outline: none;
 }
 
 /* ===== Category Tabs (برگه‌های کاغذی) ===== */

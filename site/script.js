@@ -15,14 +15,51 @@ if (tg) {
   }
 }
 
+// ===== تم تاریک/روشن =====
+const themeToggleBtn = document.getElementById("themeToggle");
+
+function applyTheme(theme) {
+  if (theme === "dark") {
+    document.documentElement.setAttribute("data-theme", "dark");
+    themeToggleBtn.textContent = "☀️";
+  } else {
+    document.documentElement.removeAttribute("data-theme");
+    themeToggleBtn.textContent = "🌙";
+  }
+}
+
+function detectInitialTheme() {
+  // اول اگه کاربر قبلاً دستی انتخاب کرده، همونو رعایت کن
+  const saved = sessionStorage.getItem("perShop_theme");
+  if (saved) return saved;
+  // وگرنه از تم فعلی تلگرام پیروی کن
+  if (tg && tg.colorScheme === "dark") return "dark";
+  if (window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches) return "dark";
+  return "light";
+}
+
+applyTheme(detectInitialTheme());
+
+themeToggleBtn.addEventListener("click", () => {
+  const isDark = document.documentElement.getAttribute("data-theme") === "dark";
+  const next = isDark ? "light" : "dark";
+  applyTheme(next);
+  sessionStorage.setItem("perShop_theme", next);
+  hapticTap();
+});
+
 // ===== State =====
 let allProducts = [];
 let activeCategory = "all";
+let searchTerm = "";
+let sortMode = "default";
 
 const grid = document.getElementById("productGrid");
 const skeletonGrid = document.getElementById("skeletonGrid");
 const tabsContainer = document.getElementById("categoryTabs");
 const emptyState = document.getElementById("emptyState");
+const searchInput = document.getElementById("searchInput");
+const sortSelect = document.getElementById("sortSelect");
 
 // ===== بارگذاری دیتا =====
 async function loadProducts() {
@@ -34,6 +71,7 @@ async function loadProducts() {
     allProducts = (data.products || []).filter(p => p.is_active !== false);
     buildCategoryTabs(data.categories || []);
     renderGrid();
+    openProductFromUrlIfAny();
   } catch (err) {
     console.error("خطا در بارگذاری محصولات:", err);
     emptyState.hidden = false;
@@ -73,16 +111,50 @@ function isNewProduct(product) {
   return diffDays <= NEW_PRODUCT_DAYS;
 }
 
+// ===== جستجو =====
+let searchDebounceTimer = null;
+searchInput.addEventListener("input", () => {
+  clearTimeout(searchDebounceTimer);
+  searchDebounceTimer = setTimeout(() => {
+    searchTerm = searchInput.value.trim().toLowerCase();
+    renderGrid();
+  }, 180);
+});
+
+// ===== مرتب‌سازی =====
+sortSelect.addEventListener("change", () => {
+  sortMode = sortSelect.value;
+  hapticTap();
+  renderGrid();
+});
+
+function applySort(list) {
+  const arr = [...list];
+  if (sortMode === "price_asc") arr.sort((a, b) => (a.price || 0) - (b.price || 0));
+  else if (sortMode === "price_desc") arr.sort((a, b) => (b.price || 0) - (a.price || 0));
+  else arr.sort((a, b) => new Date(b.created_at || 0) - new Date(a.created_at || 0));
+  return arr;
+}
+
 function renderGrid() {
-  const filtered = activeCategory === "all"
+  let filtered = activeCategory === "all"
     ? allProducts
     : allProducts.filter(p => p.category === activeCategory);
+
+  if (searchTerm) {
+    filtered = filtered.filter(p =>
+      (p.title || "").toLowerCase().includes(searchTerm) ||
+      (p.description || "").toLowerCase().includes(searchTerm)
+    );
+  }
+
+  filtered = applySort(filtered);
 
   grid.innerHTML = "";
 
   if (filtered.length === 0) {
     emptyState.hidden = false;
-    emptyState.textContent = "محصولی در این دسته پیدا نشد.";
+    emptyState.textContent = searchTerm ? "چیزی با این عبارت پیدا نشد." : "محصولی در این دسته پیدا نشد.";
     return;
   }
   emptyState.hidden = true;
@@ -133,8 +205,8 @@ const sheetOutOfStock = document.getElementById("sheetOutOfStock");
 
 let currentOrderUrl = null;
 
-function openSheet(product) {
-  hapticTap();
+function openSheet(product, fromUrl = false) {
+  if (!fromUrl) hapticTap();
   sheetImage.src = product.image_url;
   sheetImage.alt = product.title;
   sheetStamp.hidden = !isNewProduct(product);
@@ -156,6 +228,9 @@ function openSheet(product) {
     currentOrderUrl = `https://t.me/${BOT_USERNAME}?start=order_${product.id}`;
   }
 
+  // برای اشتراک‌گذاری مستقیم لینک همین محصول، آیدی رو در URL می‌گذاریم
+  history.replaceState(null, "", `?product=${product.id}`);
+
   sheetOverlay.hidden = false;
   sheet.hidden = false;
   document.body.style.overflow = "hidden";
@@ -169,10 +244,20 @@ function closeSheet() {
   sheetOverlay.classList.remove("visible");
   sheet.classList.remove("visible");
   document.body.style.overflow = "";
+  history.replaceState(null, "", location.pathname);
   setTimeout(() => {
     sheetOverlay.hidden = true;
     sheet.hidden = true;
   }, 320);
+}
+
+// اگه لینک با ?product=ID باز شده باشه، خودکار همون محصول رو نشون بده
+function openProductFromUrlIfAny() {
+  const params = new URLSearchParams(location.search);
+  const productId = params.get("product");
+  if (!productId) return;
+  const product = allProducts.find(p => p.id === productId);
+  if (product) openSheet(product, true);
 }
 
 sheetBuyBtn.addEventListener("click", () => {

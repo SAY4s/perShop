@@ -3,12 +3,16 @@ handlers/order.py
 وقتی مشتری از سایت روی دکمه خرید کلیک می‌کنه، به دیپ‌لینک
 t.me/BOT_USERNAME?start=order_<id> هدایت می‌شه. این هندلر سفارش
 رو می‌گیره، اطلاعات تماس مشتری رو می‌پرسه، و به ادمین‌ها فوروارد می‌کنه.
+
+همچنین /start ساده (بدون پارامتر سفارش) یک دکمه برای باز کردن
+فروشگاه به‌صورت Mini App نشون می‌ده.
 """
 from telebot import TeleBot
-from telebot.types import Message
+from telebot.types import Message, InlineKeyboardMarkup, InlineKeyboardButton, WebAppInfo
 
-from config import ADMIN_IDS
+from config import ADMIN_IDS, SITE_URL
 from product_store import get_product
+from order_log import log_order
 
 # state موقت: user_id -> {"product_id": ...}
 _order_states = {}
@@ -20,7 +24,16 @@ def register_order_handlers(bot: TeleBot):
     def cmd_start(message: Message):
         args = message.text.split(maxsplit=1)
         if len(args) < 2 or not args[1].startswith("order_"):
-            bot.reply_to(message, "👋 سلام! به perShop خوش اومدی.")
+            kb = None
+            if SITE_URL:
+                kb = InlineKeyboardMarkup()
+                kb.add(InlineKeyboardButton("🛍 باز کردن فروشگاه", web_app=WebAppInfo(SITE_URL)))
+            bot.send_message(
+                message.chat.id,
+                "👋 سلام! به perShop خوش اومدی.\n"
+                + ("برای دیدن محصولات روی دکمه‌ی زیر بزن:" if SITE_URL else "فعلاً آدرس فروشگاه تنظیم نشده."),
+                reply_markup=kb,
+            )
             return
 
         product_id = args[1][len("order_"):]
@@ -53,6 +66,15 @@ def register_order_handlers(bot: TeleBot):
 
         customer = message.from_user
         customer_tag = f"@{customer.username}" if customer.username else f"id:{customer.id}"
+
+        log_order(
+            product_id=product["id"],
+            product_title=product["title"],
+            price=product["price"],
+            customer_id=customer.id,
+            customer_tag=customer_tag,
+            note=message.text,
+        )
 
         admin_text = (
             f"🛎 سفارش جدید!\n\n"
