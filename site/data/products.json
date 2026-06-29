@@ -1,23 +1,5 @@
 {
-  "last_updated": "2026-06-29T11:05:53.882462Z",
-  "categories": [
-    "دیجیتال",
-    "فیزیکی",
-    "اشتراک"
-  ],
-  "products": [
-    {
-      "id": "p_0001",
-      "title": "مهدیس حبیبی",
-      "description": "چشاش رنگی خودش بنگی",
-      "price": 698500000,
-      "currency": "IRT",
-      "category": "فیزیکی",
-      "image_url": "./assets/p_0001.jpg",
-      "in_stock": true,
-      "stock_count": 1,
-      "created_at": "2026-06-29T10:59:50.058940Z",
-      "is_active": true
-    }
-  ]
+  "last_updated": "2026-06-28T00:00:00Z",
+  "categories": ["دیجیتال", "فیزیکی", "اشتراک"],
+  "products": []
 }

@@ -79,6 +79,23 @@ def deactivate_product(product_id: str, commit_actor="admin"):
     return update_product_field(product_id, "is_active", False, commit_actor)
 
 
+def decrease_stock(product_id: str, amount: int = 1, commit_actor="admin"):
+    """
+    موجودی یک محصول رو به‌اندازه‌ی amount کم می‌کنه (هیچ‌وقت منفی نمی‌شه).
+    این تابع کاملاً مستقل از فلوی سفارش‌مشتری‌هاست؛ فقط با تصمیم صریح ادمین صدا زده می‌شه.
+    خروجی: محصول آپدیت‌شده، یا None اگه محصول پیدا نشد.
+    """
+    data, _ = load_products()
+    for p in data["products"]:
+        if p["id"] == product_id:
+            new_count = max(0, p.get("stock_count", 0) - amount)
+            p["stock_count"] = new_count
+            p["in_stock"] = new_count > 0
+            save_products(data, f"chore: decrease stock of {product_id} by {amount} ({commit_actor})")
+            return p
+    return None
+
+
 def delete_product(product_id: str, commit_actor="admin"):
     data, _ = load_products()
     before = len(data["products"])

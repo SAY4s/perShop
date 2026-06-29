@@ -132,6 +132,11 @@ def register_add_product_handlers(bot: TeleBot):
                 commit_actor=message.from_user.username or str(message.from_user.id),
             )
 
+            kb_done = InlineKeyboardMarkup()
+            kb_done.row(
+                InlineKeyboardButton("➕ افزودن محصول دیگر", callback_data="quickadd"),
+                InlineKeyboardButton("📋 مشاهده لیست", callback_data="quicklist"),
+            )
             bot.send_message(
                 message.chat.id,
                 f"✅ محصول با موفقیت ثبت شد!\n\n"
@@ -140,7 +145,8 @@ def register_add_product_handlers(bot: TeleBot):
                 f"💰 {product['price']:,} تومان\n"
                 f"🏷 {product['category']}\n"
                 f"📦 موجودی: {product['stock_count']}\n\n"
-                f"سایت تا چند دقیقه دیگه آپدیت می‌شه."
+                f"سایت تا چند دقیقه دیگه آپدیت می‌شه.",
+                reply_markup=kb_done,
             )
         except Exception as e:
             import traceback

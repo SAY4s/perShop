@@ -38,4 +38,7 @@ def register_list_handlers(bot: TeleBot):
                 InlineKeyboardButton("✏️ ویرایش", callback_data=f"edit:{p['id']}"),
                 InlineKeyboardButton("🗑 حذف", callback_data=f"del:{p['id']}"),
             )
+            kb.row(
+                InlineKeyboardButton("📦 کم کردن موجودی", callback_data=f"stockdec:{p['id']}"),
+            )
             bot.send_message(message.chat.id, text, reply_markup=kb)
