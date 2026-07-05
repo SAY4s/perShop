@@ -1,5 +1,5 @@
 {
-  "last_updated": "2026-06-29T18:42:34.238997Z",
+  "last_updated": "2026-07-05T10:52:16.394719Z",
   "categories": [
     "دیجیتال",
     "فیزیکی",
@@ -14,8 +14,8 @@
       "currency": "IRT",
       "category": "فیزیکی",
       "image_url": "./assets/p_0001.jpg",
-      "in_stock": true,
-      "stock_count": 1,
+      "in_stock": false,
+      "stock_count": 0,
       "created_at": "2026-06-29T18:37:52.135076Z",
       "is_active": true
     }
