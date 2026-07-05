@@ -1,5 +1,5 @@
 {
-  "last_updated": "2026-07-05T10:55:48.067662Z",
+  "last_updated": "2026-07-05T10:57:38.100193Z",
   "categories": [
     "دیجیتال",
     "فیزیکی",
@@ -12,7 +12,7 @@
       "description": "یکی یدونس",
       "price": 23457890,
       "currency": "IRT",
-      "category": "فیزیکی",
+      "category": "خاص",
       "image_url": "./assets/p_0001.jpg",
       "in_stock": true,
       "stock_count": 1,
